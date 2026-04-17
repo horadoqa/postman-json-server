@@ -15,7 +15,7 @@ jobs:
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 18
 
       - name: 📦 Instalar dependências
         run: |
@@ -35,13 +35,19 @@ jobs:
           newman run json-server-postman-collection.json \
             --env-var base_url=http://localhost:3000 \
             -r htmlextra \
-            --reporter-htmlextra-export report.html \
-            --reporter-htmlextra-title "API Test Report" \
-            --reporter-htmlextra-darkTheme
+            --reporter-htmlextra-export report.html
 
-      - name: 📁 Preparar pasta do site
+      - name: 🔍 Verificar geração do relatório
         run: |
-          mkdir public
+          ls -la
+          if [ ! -f report.html ]; then
+            echo "❌ report.html NÃO foi gerado!"
+            exit 1
+          fi
+
+      - name: 📁 Preparar página do GitHub Pages
+        run: |
+          mkdir -p public
           cp report.html public/index.html
 
       - name: 🚀 Deploy no GitHub Pages
