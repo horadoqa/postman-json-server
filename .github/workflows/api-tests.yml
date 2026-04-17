@@ -30,7 +30,7 @@ jobs:
 
       - name: ⏳ Aguardar servidor subir
         run: |
-          wait-on http://localhost:3000
+          npx wait-on http://localhost:3000/users
 
       - name: 🧪 Rodar testes (gera relatório)
         continue-on-error: true
