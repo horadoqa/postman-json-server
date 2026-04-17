@@ -1,4 +1,29 @@
-# Melhorias de performance para o NODE
+# NODE
+
+Os três pilares:
+
+✔️ JavaScript (base bem feita)
+✔️ JSON (estrutura de dados)
+✔️ HTTP (comunicação)
+
+🟡 JavaScript (base bem feita)
+
+Não só o básico, mas principalmente manipulação de dados. No backend, você vai lidar com objetos e arrays o tempo todo. Se operações como map, filter ou desestruturação ainda não são naturais pra você, isso começa a impactar diretamente na forma como o código é escrito e mantido.
+
+E aqui entra um ponto importante: assincronismo.
+
+No Node.js, praticamente tudo envolve async/await. Entender como isso funciona evita desde bugs simples até problemas de desempenho mais difíceis de identificar depois.
+—
+🔵 JSON (estrutura de dados)
+
+É o formato padrão de comunicação das APIs. Mais do que saber o que é, o importante é entender como os dados estão sendo estruturados e manipulados. Muitos erros comuns no backend vêm justamente de inconsistências nesse processo.
+—
+🟢 HTTP (comunicação)
+
+O backend, na prática, é sobre responder requisições. Então entender status codes e headers faz diferença. Não só saber que 201 é criação ou 403 é permissão, mas entender o que cada resposta está comunicando. Headers também entram nisso, principalmente em coisas como autenticação e definição do tipo de conteúdo. Sem esse entendimento, fica difícil estruturar bem uma API.
+—
+
+## Melhorias de performance
 
 1. Connection pool no banco
 
