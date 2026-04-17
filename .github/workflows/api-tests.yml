@@ -26,11 +26,11 @@ jobs:
 
       - name: 🚀 Iniciar JSON Server
         run: |
-          json-server --watch db.json --port 3000 &
+          json-server --watch db.json --port 3000 --quiet
 
       - name: ⏳ Aguardar servidor subir
         run: |
-          npx wait-on http://localhost:3000/users
+          npx wait-on http://localhost:3000
 
       - name: 🧪 Rodar testes (gera relatório)
         continue-on-error: true
