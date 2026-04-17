@@ -1,8 +1,8 @@
 {
   "info": {
-    "name": "JSON Server CI Stable Fixed",
-    "_postman_id": "ci-stable-fixed-v2",
-    "description": "Collection corrigida para CI com JSON Server",
+    "name": "JSON Server CI Stable - Corrected",
+    "_postman_id": "ci-stable-v3",
+    "description": "Collection corrigida com validação real de API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
 
@@ -18,8 +18,9 @@
   ],
 
   "item": [
+
     {
-      "name": "00 - HEALTH CHECK API",
+      "name": "00 - HEALTH CHECK (MUST PASS)",
       "request": {
         "method": "GET",
         "url": "{{base_url}}"
@@ -39,7 +40,7 @@
     },
 
     {
-      "name": "01 - GET Users (Smoke Safe)",
+      "name": "01 - GET Users (Smoke)",
       "request": {
         "method": "GET",
         "url": "{{base_url}}/users"
@@ -49,16 +50,13 @@
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test('Status is 200 or empty DB fallback', () => {",
-              "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+              "pm.test('Users endpoint must exist', () => {",
+              "    pm.expect(pm.response.code).to.eql(200);",
               "});",
               "",
-              "if (pm.response.code === 200) {",
-              "    const json = pm.response.json();",
-              "    pm.expect(json).to.be.an('array');",
-              "} else {",
-              "    pm.expect(true).to.eql(true);",
-              "}"
+              "pm.test('Response is array', () => {",
+              "    pm.expect(pm.response.json()).to.be.an('array');",
+              "});"
             ]
           }
         }
@@ -66,7 +64,7 @@
     },
 
     {
-      "name": "02 - CREATE User (CI Safe)",
+      "name": "02 - CREATE User (STRICT CI)",
       "request": {
         "method": "POST",
         "header": [
@@ -94,15 +92,16 @@
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test('Created successfully OR JSON Server active', () => {",
-              "    pm.expect(pm.response.code).to.be.oneOf([201, 200]);",
+              "pm.test('CREATE user must succeed', () => {",
+              "    pm.expect(pm.response.code).to.eql(201);",
               "});",
               "",
-              "if (pm.response.code === 201 || pm.response.code === 200) {",
-              "    const json = pm.response.json();",
+              "const json = pm.response.json();",
+              "pm.test('User has ID', () => {",
               "    pm.expect(json.id).to.exist;",
-              "    pm.collectionVariables.set('user_id', json.id);",
-              "}"
+              "});",
+              "",
+              "pm.collectionVariables.set('user_id', json.id);"
             ]
           }
         }
@@ -110,7 +109,7 @@
     },
 
     {
-      "name": "03 - GET User By ID (Safe)",
+      "name": "03 - GET User By ID",
       "request": {
         "method": "GET",
         "url": "{{base_url}}/users/{{user_id}}"
@@ -120,8 +119,8 @@
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test('Response valid', () => {",
-              "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+              "pm.test('User must exist', () => {",
+              "    pm.expect(pm.response.code).to.eql(200);",
               "});"
             ]
           }
@@ -130,7 +129,7 @@
     },
 
     {
-      "name": "04 - UPDATE User (Safe)",
+      "name": "04 - UPDATE User",
       "request": {
         "method": "PUT",
         "header": [
@@ -141,7 +140,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"name\": \"Updated CI User\"\n}"
+          "raw": "{\n  \"name\": \"Updated User\"\n}"
         },
         "url": "{{base_url}}/users/{{user_id}}"
       },
@@ -150,8 +149,8 @@
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test('Update safe check', () => {",
-              "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+              "pm.test('Update must succeed', () => {",
+              "    pm.expect(pm.response.code).to.eql(200);",
               "});"
             ]
           }
@@ -160,7 +159,7 @@
     },
 
     {
-      "name": "05 - DELETE User (Safe)",
+      "name": "05 - DELETE User",
       "request": {
         "method": "DELETE",
         "url": "{{base_url}}/users/{{user_id}}"
@@ -170,8 +169,8 @@
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test('Delete safe check', () => {",
-              "    pm.expect(pm.response.code).to.be.oneOf([200, 204, 404]);",
+              "pm.test('Delete must succeed', () => {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
               "});"
             ]
           }
