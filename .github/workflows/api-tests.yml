@@ -1,0 +1,51 @@
+name: API Tests + Publish Report
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  test-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v3
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 📦 Instalar dependências
+        run: |
+          npm install -g json-server newman newman-reporter-htmlextra wait-on
+
+      - name: 🚀 Iniciar JSON Server
+        run: |
+          json-server --watch db.json --port 3000 &
+
+      - name: ⏳ Aguardar servidor subir
+        run: |
+          wait-on http://localhost:3000
+
+      - name: 🧪 Rodar testes (gera relatório)
+        continue-on-error: true
+        run: |
+          newman run json-server-postman-collection.json \
+            --env-var base_url=http://localhost:3000 \
+            -r htmlextra \
+            --reporter-htmlextra-export report.html \
+            --reporter-htmlextra-title "API Test Report" \
+            --reporter-htmlextra-darkTheme
+
+      - name: 📁 Preparar pasta do site
+        run: |
+          mkdir public
+          cp report.html public/index.html
+
+      - name: 🚀 Deploy no GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
