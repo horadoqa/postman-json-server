@@ -1,4 +1,4 @@
-name: API Tests + Publish Report
+name: CI/CD - API Tests + Publish Report
 
 on:
   push:

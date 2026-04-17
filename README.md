@@ -1,7 +1,5 @@
 # 📦 JSON Server + Postman Tests
 
-![API Tests](https://github.com/horadoqa/postman-json-server/actions/workflows/api-tests.yml/badge.svg)
-
 Este projeto demonstra como utilizar o **JSON Server** como uma API fake e o **Postman** para realizar testes automatizados de endpoints REST.
 
 ---
@@ -194,6 +192,17 @@ newman run json-server-postman-collection.json
 * Criar múltiplos recursos (posts, comments, etc.)
 * Integrar com pipelines de CI/CD
 
+---
+
+## ⚙️ CI/CD
+
+Este projeto está sendo exectado no Github Actions:
+
+![API Tests](https://github.com/horadoqa/postman-json-server/actions/workflows/api-tests.yml/badge.svg)
+
+<div align="center">
+<img src="./images/newman.png">
+</div>
 ---
 
 ## 👨‍💻 Contribuição
