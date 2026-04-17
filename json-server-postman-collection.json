@@ -1,8 +1,8 @@
 {
   "info": {
-    "name": "JSON Server CI Stable - Corrected",
-    "_postman_id": "ci-stable-v3",
-    "description": "Collection corrigida com validação real de API",
+    "name": "JSON Server CI Stable - Precheck Version",
+    "_postman_id": "ci-precheck-v1",
+    "description": "Collection com validação de API antes dos testes",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
 
@@ -20,27 +20,7 @@
   "item": [
 
     {
-      "name": "00 - HEALTH CHECK (MUST PASS)",
-      "request": {
-        "method": "GET",
-        "url": "{{base_url}}"
-      },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test('API is reachable', () => {",
-              "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
-              "});"
-            ]
-          }
-        }
-      ]
-    },
-
-    {
-      "name": "01 - GET Users (Smoke)",
+      "name": "00 - API HEALTH CHECK (CRITICAL)",
       "request": {
         "method": "GET",
         "url": "{{base_url}}/users"
@@ -50,11 +30,11 @@
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test('Users endpoint must exist', () => {",
+              "pm.test('API must be reachable', function () {",
               "    pm.expect(pm.response.code).to.eql(200);",
               "});",
               "",
-              "pm.test('Response is array', () => {",
+              "pm.test('Must return array', function () {",
               "    pm.expect(pm.response.json()).to.be.an('array');",
               "});"
             ]
@@ -64,7 +44,7 @@
     },
 
     {
-      "name": "02 - CREATE User (STRICT CI)",
+      "name": "01 - CREATE User (SAFE CI)",
       "request": {
         "method": "POST",
         "header": [
@@ -92,14 +72,12 @@
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test('CREATE user must succeed', () => {",
-              "    pm.expect(pm.response.code).to.eql(201);",
+              "pm.test('CREATE must return 201', function () {",
+              "    pm.response.to.have.status(201);",
               "});",
               "",
               "const json = pm.response.json();",
-              "pm.test('User has ID', () => {",
-              "    pm.expect(json.id).to.exist;",
-              "});",
+              "pm.expect(json.id).to.exist;",
               "",
               "pm.collectionVariables.set('user_id', json.id);"
             ]
@@ -109,7 +87,7 @@
     },
 
     {
-      "name": "03 - GET User By ID",
+      "name": "02 - GET User By ID (PRECHECKED)",
       "request": {
         "method": "GET",
         "url": "{{base_url}}/users/{{user_id}}"
@@ -119,8 +97,8 @@
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test('User must exist', () => {",
-              "    pm.expect(pm.response.code).to.eql(200);",
+              "pm.test('User must exist', function () {",
+              "    pm.response.to.have.status(200);",
               "});"
             ]
           }
@@ -129,7 +107,7 @@
     },
 
     {
-      "name": "04 - UPDATE User",
+      "name": "03 - UPDATE User",
       "request": {
         "method": "PUT",
         "header": [
@@ -140,7 +118,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"name\": \"Updated User\"\n}"
+          "raw": "{\n  \"name\": \"Updated CI User\"\n}"
         },
         "url": "{{base_url}}/users/{{user_id}}"
       },
@@ -149,8 +127,8 @@
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test('Update must succeed', () => {",
-              "    pm.expect(pm.response.code).to.eql(200);",
+              "pm.test('Update must succeed', function () {",
+              "    pm.response.to.have.status(200);",
               "});"
             ]
           }
@@ -159,7 +137,7 @@
     },
 
     {
-      "name": "05 - DELETE User",
+      "name": "04 - DELETE User",
       "request": {
         "method": "DELETE",
         "url": "{{base_url}}/users/{{user_id}}"
@@ -169,7 +147,7 @@
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test('Delete must succeed', () => {",
+              "pm.test('Delete must succeed', function () {",
               "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
               "});"
             ]
